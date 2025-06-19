@@ -69,6 +69,10 @@ function App() {
     );
   };
 
+  function getData() {
+    return fetch(`http://localhost:5000/votes`);
+  }
+
   const addCount = (groupName) => {
     //check if user has voted
     // if true then alert user they already voted
@@ -82,9 +86,13 @@ function App() {
     );
   };
 
-  /* useEffect(() => {
-    axios.get('/api/results').then(res => setResults(res.data));
-  }, [voted]); */
+  useEffect(() => {
+    getData().then((res) => {
+      setData(res.data);
+      console.log(res);
+      console.log(data);
+    });
+  }, [voted]);
 
   return (
     <div className="app">
