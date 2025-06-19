@@ -2,37 +2,11 @@ import "./App.css";
 import meeedly from "./assets/global_summer_challenge_logo.jfif";
 import global from "./assets/meeedly_logo.jfif";
 import { PieChart, Pie, ResponsiveContainer, Cell } from "recharts";
-import axios from "axios";
 import { useState, useEffect } from "react";
 
 function App() {
   const [voted, setVoted] = useState(localStorage.getItem("hasVoted"));
-  const [data, setData] = useState([
-    {
-      name: "Group A",
-      value: 1,
-    },
-    {
-      name: "Group B",
-      value: 1,
-    },
-    {
-      name: "Group C",
-      value: 1,
-    },
-    {
-      name: "Group D",
-      value: 1,
-    },
-    {
-      name: "Group E",
-      value: 1,
-    },
-    {
-      name: "Group F",
-      value: 1,
-    },
-  ]);
+  const [data, setData] = useState([]);
 
   const COLORS = [
     "#0088FE",
@@ -69,8 +43,14 @@ function App() {
     );
   };
 
+  function checkRes(res) {
+    return res.ok ? res.json() : Promise.reject(`Error: ${res.status}`);
+  }
+
   function getData() {
-    return fetch(`http://localhost:5000/votes`);
+    return fetch(`http://localhost:5000/votes`)
+      .then(checkRes)
+      .catch(console.error);
   }
 
   const addCount = (groupName) => {
@@ -79,18 +59,21 @@ function App() {
     //if false then
     //setNumber(count + 1);
     //console.log(count);
-    setData((prevData) =>
-      prevData.map((item) =>
-        item.name === groupName ? { ...item, value: item.value + 1 } : item
-      )
+    setData(
+      (prevData) =>
+        prevData.map((item) =>
+          item.name === groupName
+            ? { ...item, value: (Number(item.value) + 1).toString() }
+            : item
+        ),
+      console.log(data)
     );
   };
 
   useEffect(() => {
     getData().then((res) => {
-      setData(res.data);
+      setData(res);
       console.log(res);
-      console.log(data);
     });
   }, [voted]);
 
