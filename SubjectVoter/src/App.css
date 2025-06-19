@@ -12,9 +12,14 @@
   justify-content: center;
 }
 
+.app__content {
+  color: black;
+}
+
 .app__subjects {
   display: grid;
   grid-template-columns: auto auto auto;
+  color: black;
 }
 
 .app__voteData {
@@ -27,6 +32,7 @@
 
 .app_disclaimers {
   margin: 50px;
+  color: black;
 }
 
 .app__subjects_SE {
