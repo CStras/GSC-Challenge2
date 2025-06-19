@@ -2,10 +2,11 @@ import "./App.css";
 import meeedly from "./assets/global_summer_challenge_logo.jfif";
 import global from "./assets/meeedly_logo.jfif";
 import { PieChart, Pie, ResponsiveContainer, Cell } from "recharts";
-
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 function App() {
+  const [voted, setVoted] = useState(localStorage.getItem("hasVoted"));
   const [data, setData] = useState([
     {
       name: "Group A",
@@ -82,9 +83,8 @@ function App() {
   };
 
   /* useEffect(() => {
-    // check backend for subject vote data
-    // set useState values for each subject from backend data
-  }, []); */
+    axios.get('/api/results').then(res => setResults(res.data));
+  }, [voted]); */
 
   return (
     <div className="app">
