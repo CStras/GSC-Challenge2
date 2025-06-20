@@ -117,6 +117,11 @@ function App() {
     }
   };
 
+  const resetVote = () => {
+    setVoted(false);
+    localStorage.setItem("hasVoted", "false");
+  };
+
   const copyLink = () => {
     const link =
       "https://www.linkedin.com/showcase/global-summer-challenge/posts/?feedView=all";
@@ -181,6 +186,7 @@ function App() {
           >
             Phyiscs
           </button>
+          <button onClick={resetVote}>Reset Vote</button>
         </div>
 
         {!voted && (
