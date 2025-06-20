@@ -5,8 +5,38 @@ import { PieChart, Pie, ResponsiveContainer, Cell } from "recharts";
 import { useState, useEffect } from "react";
 
 function App() {
-  const [voted, setVoted] = useState(localStorage.getItem("hasVoted"));
-  const [data, setData] = useState([]);
+  const [voted, setVoted] = useState(
+    localStorage.getItem("hasVoted") === "true"
+  );
+  const [showCopied, setShowCopied] = useState(false);
+  const [showFailedCopied, setFailedShowCopied] = useState(false);
+
+  const [data, setData] = useState([
+    {
+      name: "Group A",
+      value: 1,
+    },
+    {
+      name: "Group B",
+      value: 1,
+    },
+    {
+      name: "Group C",
+      value: 1,
+    },
+    {
+      name: "Group D",
+      value: 1,
+    },
+    {
+      name: "Group E",
+      value: 1,
+    },
+    {
+      name: "Group F",
+      value: 1,
+    },
+  ]);
 
   const COLORS = [
     "#0088FE",
@@ -53,27 +83,64 @@ function App() {
       .catch(console.error);
   }
 
+  function addVote(name) {
+    return fetch(`http://localhost:5000/votes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    }).then(checkRes);
+  }
+
+  /*const reset = () => {
+    localStorage.setItem("hasVoted", "false");
+    setVoted(false);
+    console.log(localStorage.getItem("hasVoted"));
+    console.log(voted);
+  };*/
+
   const addCount = (groupName) => {
-    //check if user has voted
-    // if true then alert user they already voted
-    //if false then
-    //setNumber(count + 1);
-    //console.log(count);
-    setData(
-      (prevData) =>
-        prevData.map((item) =>
-          item.name === groupName
-            ? { ...item, value: (Number(item.value) + 1).toString() }
-            : item
-        ),
-      console.log(data)
-    );
+    if (!voted) {
+      handleVote(groupName);
+    } else {
+      alert("already voted");
+    }
+  };
+
+  const handleVote = (groupName) => {
+    console.log(groupName);
+    if (!voted) {
+      addVote(groupName).then(() => {
+        setVoted(true);
+        localStorage.setItem("hasVoted", "true");
+        // Fetch updated data from backend after voting
+        getData().then((res) => setData(res), console.log(data));
+      });
+    }
+  };
+
+  const copyLink = () => {
+    const link =
+      "https://www.linkedin.com/showcase/global-summer-challenge/posts/?feedView=all";
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        setShowCopied(true);
+        setTimeout(() => setShowCopied(false), 2000); // Show for 2 seconds
+      })
+      .catch(() => {
+        setFailedShowCopied(true);
+        setTimeout(() => setFailedShowCopied(false), 2000); // Show for 2 seconds
+      });
+  };
+
+  const resetVote = () => {
+    setVoted(false);
+    localStorage.setItem("hasVoted", "false");
   };
 
   useEffect(() => {
     getData().then((res) => {
       setData(res);
-      console.log(res);
     });
   }, [voted]);
 
@@ -120,13 +187,55 @@ function App() {
           >
             Phyiscs
           </button>
+          <button onClick={resetVote}>Reset Vote</button>
         </div>
+
+        {!voted && (
+          <div className="app__subjects">
+            <button
+              className="app__subjects_SE"
+              onClick={() => addCount("Group A")}
+            >
+              Software Engineering
+            </button>
+            <button
+              className="app__subjects_BS"
+              onClick={() => addCount("Group B")}
+            >
+              Business Studies
+            </button>
+            <button
+              className="app__subjects_F"
+              onClick={() => addCount("Group C")}
+            >
+              Finance
+            </button>
+            <button
+              className="app__subjects_MS"
+              onClick={() => addCount("Group D")}
+            >
+              Medical Studies
+            </button>
+            <button
+              className="app__subjects_E"
+              onClick={() => addCount("Group E")}
+            >
+              Engineering
+            </button>
+            <button
+              className="app__subjects_P"
+              onClick={() => addCount("Group F")}
+            >
+              Phyiscs
+            </button>
+          </div>
+        )}
       </section>
       <div className="app__voteData">
         <ResponsiveContainer aspect={1}>
           <PieChart>
             <Pie
-              data={data}
+              data={data.map((d) => ({ ...d, value: Number(d.value) }))}
               dataKey="value"
               nameKey="name"
               cx="50%"
@@ -145,14 +254,28 @@ function App() {
           </PieChart>
         </ResponsiveContainer>
       </div>
+      {showCopied && (
+        <div className="copied-message">Link copied to clipboard!</div>
+      )}
+      {showFailedCopied && (
+        <div className="copied-message">Failed to copy link.</div>
+      )}
+      <button onClick={copyLink}>Copy Challenge Page Link</button>
+      <a
+        target="_blank"
+        href="https://www.linkedin.com/showcase/global-summer-challenge/posts/?feedView=all"
+      >
+        Click here to visit the Meeedley Global Summer Challenge Page
+      </a>
       <section className="app_disclaimers">
         <p>
-          Disclaimer 1 This program is intended solely for fun and interactive
-          engagement. It does not reflect any official academic evaluation.
+          <b>Disclaimer 1</b> - This program is intended solely for fun and
+          interactive engagement. It does not reflect any official academic
+          evaluation.
         </p>
         <p>
-          Disclaimer 2 This application is developed as part of the Global
-          Summer Challenge organized by Meeedly.
+          <b>Disclaimer 2</b> - This application is developed as part of the
+          Global Summer Challenge organized by Meeedly.
         </p>
       </section>
     </div>
