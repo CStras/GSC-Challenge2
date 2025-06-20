@@ -107,13 +107,12 @@ function App() {
   };
 
   const handleVote = (groupName) => {
-    console.log(groupName);
     if (!voted) {
       addVote(groupName).then(() => {
         setVoted(true);
         localStorage.setItem("hasVoted", "true");
         // Fetch updated data from backend after voting
-        getData().then((res) => setData(res), console.log(data));
+        getData().then((res) => setData(res));
       });
     }
   };
@@ -131,11 +130,6 @@ function App() {
         setFailedShowCopied(true);
         setTimeout(() => setFailedShowCopied(false), 2000); // Show for 2 seconds
       });
-  };
-
-  const resetVote = () => {
-    setVoted(false);
-    localStorage.setItem("hasVoted", "false");
   };
 
   useEffect(() => {
@@ -187,7 +181,6 @@ function App() {
           >
             Phyiscs
           </button>
-          <button onClick={resetVote}>Reset Vote</button>
         </div>
 
         {!voted && (
