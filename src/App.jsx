@@ -78,13 +78,13 @@ function App() {
   }
 
   function getData() {
-    return fetch(`http://localhost:5000/votes`)
+    return fetch(`http://3.148.145.250:5000//votes`)
       .then(checkRes)
       .catch(console.error);
   }
 
   function addVote(name) {
-    return fetch(`http://localhost:5000/votes`, {
+    return fetch(`http://3.148.145.250:5000//votes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
